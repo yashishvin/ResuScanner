@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1091033585857",
+    "project_id": "resuscanner",
+    "storage_bucket": "resuscanner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091033585857:android:9671e79e0afb88e3779c40",
+        "android_client_info": {
+          "package_name": "com.example.resuscanner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz8thDrjdEfASyUaEzT5dMiqM46ekHDAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
