@@ -1,11 +1,11 @@
 package com.example.resuscanner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-//import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
     Button loginButton;
@@ -20,8 +20,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Add authentication logic
-                Toast.makeText(LoginActivity.this, "Login clicked!", Toast.LENGTH_SHORT).show();
+                // Move to MainActivity directly without authentication
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish(); // Optional: Close LoginActivity so user can't come back with back button
             }
         });
     }

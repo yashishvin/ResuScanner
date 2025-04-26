@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9F4FF">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <EditText
+            android:id="@+id/et_job_description"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:hint="Paste Job Description here..."
+            android:background="@android:drawable/edit_text"
+            android:padding="16dp"/>
+
+        <Button
+            android:id="@+id/btn_analyze_jd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Analyze JD"
+            android:backgroundTint="@color/purple_500"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="24dp"/>
+
+        <TextView
+            android:id="@+id/tv_jd_analysis_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Skills you should have will appear here."
+            android:textAlignment="center"
+            android:paddingTop="32dp"
+            android:textColor="@color/black"/>
+
+    </LinearLayout>
+</ScrollView>
