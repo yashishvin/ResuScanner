@@ -1,42 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9F4FF">
 
     <LinearLayout
         android:orientation="vertical"
-        android:padding="24dp"
+        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
+        android:layout_height="wrap_content">
 
+        <!-- Enter JD -->
         <EditText
             android:id="@+id/et_job_description"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:hint="Paste Job Description here..."
+            android:hint="Paste Job Description here…"
             android:background="@android:drawable/edit_text"
-            android:padding="16dp"/>
+            android:padding="12dp"/>
 
+        <!-- Analyze Button -->
         <Button
             android:id="@+id/btn_analyze_jd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Analyze JD"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/purple_500"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="24dp"/>
+            android:textColor="@android:color/white"/>
 
-        <TextView
-            android:id="@+id/tv_jd_analysis_result"
+        <!-- 1) Role & Company Card -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Skills you should have will appear here."
-            android:textAlignment="center"
-            android:paddingTop="32dp"
-            android:textColor="@color/black"/>
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="24dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_role_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Role Title"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+                <TextView
+                    android:id="@+id/tv_company"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Company"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 2) Location & Compensation -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="16dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    style="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <TextView
+                    android:id="@+id/tv_compensation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Compensation"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 3) Required Skills -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="16dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Required Skills"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipgroup_required_skills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:chipSpacing="8dp"
+                    app:singleLine="false" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 4) Preferred Skills -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="16dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Preferred Skills"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipgroup_preferred_skills"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:chipSpacing="8dp"
+                    app:singleLine="false" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 5) Responsibilities -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Responsibilities"
+                    style="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+                <LinearLayout
+                    android:id="@+id/container_responsibilities"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<ScrollView-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="#F9F4FF">-->
+
+<!--    <LinearLayout-->
+<!--        android:orientation="vertical"-->
+<!--        android:padding="24dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center_horizontal">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/et_job_description"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="200dp"-->
+<!--            android:hint="Paste Job Description here..."-->
+<!--            android:background="@android:drawable/edit_text"-->
+<!--            android:padding="16dp"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_analyze_jd"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Analyze JD"-->
+<!--            android:backgroundTint="@color/purple_500"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:layout_marginTop="24dp"/>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_jd_analysis_result"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Skills you should have will appear here."-->
+<!--            android:textAlignment="center"-->
+<!--            android:paddingTop="32dp"-->
+<!--            android:textColor="@color/black"/>-->
+
+<!--    </LinearLayout>-->
+<!--</ScrollView>-->

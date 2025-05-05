@@ -1,22 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:background="#F9F4FF">
 
-    <TextView
-        android:text="Questions you may face:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        android:layout_marginBottom="8dp"/>
-
-    <ListView
-        android:id="@+id/lv_interview_questions"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-</LinearLayout>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Interview Questions"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp"/>
+
+        <!-- Container for each question -->
+        <LinearLayout
+            android:id="@+id/container_questions"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</ScrollView>

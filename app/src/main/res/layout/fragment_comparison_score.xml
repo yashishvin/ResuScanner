@@ -39,4 +39,19 @@
         android:textSize="32sp"
         android:textColor="@color/purple_500"
         android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_match_explanation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        style="@style/TextAppearance.MaterialComponents.Body2"/>
+
+    <LinearLayout
+        android:id="@+id/container_improvements"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
+
 </LinearLayout>
