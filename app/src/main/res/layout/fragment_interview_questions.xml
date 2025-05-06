@@ -1,23 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#F9F4FF">
+    android:fillViewport="true"
+    android:background="#F9F4FF"
+    android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
+    android:scrollbarSize="4dp"
+    android:scrollbars="vertical"
+    android:fadeScrollbars="false">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Interview Questions"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:paddingBottom="12dp"/>
+            android:textColor="#333333"
+            android:paddingBottom="16dp"/>
+
+        <!-- Indicator that content is scrollable -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scroll down to see all questions"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:drawableBottom="@drawable/ic_arrow_down"
+            android:drawablePadding="4dp"
+            android:paddingBottom="12dp"
+            android:id="@+id/scroll_indicator"/>
 
         <!-- Container for each question -->
         <LinearLayout
@@ -27,4 +50,4 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
