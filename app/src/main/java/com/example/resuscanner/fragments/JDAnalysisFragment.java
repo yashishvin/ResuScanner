@@ -1,5 +1,6 @@
 package com.example.resuscanner.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.example.resuscanner.R;
 import com.google.android.material.chip.Chip;
@@ -40,6 +42,7 @@ public class JDAnalysisFragment extends Fragment {
     private TextView    tvRoleTitle, tvCompany, tvLocation, tvCompensation;
     private ChipGroup   chipRequiredSkills, chipPreferredSkills;
     private LinearLayout containerResponsibilities;
+    private ProgressBar progressBar; // Add ProgressBar variable
 
     // Provided by ResumeAnalysisFragment via arguments
     private String resumeSessionId;
@@ -64,6 +67,7 @@ public class JDAnalysisFragment extends Fragment {
         chipRequiredSkills       = rootView.findViewById(R.id.chipgroup_required_skills);
         chipPreferredSkills      = rootView.findViewById(R.id.chipgroup_preferred_skills);
         containerResponsibilities= rootView.findViewById(R.id.container_responsibilities);
+        progressBar              = rootView.findViewById(R.id.progress_bar); // Initialize ProgressBar
 
         // Retrieve the resumeSessionId passed as an argument
         // at the top of onCreateView() in JDAnalysisFragment
@@ -75,8 +79,6 @@ public class JDAnalysisFragment extends Fragment {
             btnAnalyzeJD.setEnabled(false);
         }
 
-
-
         btnAnalyzeJD.setOnClickListener(v -> {
             String jdText = etJobDescription.getText().toString().trim();
             if (jdText.isEmpty()) {
@@ -84,6 +86,10 @@ public class JDAnalysisFragment extends Fragment {
             } else if (resumeSessionId == null) {
                 Toast.makeText(getContext(), "Missing resume session ID", Toast.LENGTH_SHORT).show();
             } else {
+                // Show loading indicator and disable button
+                progressBar.setVisibility(View.VISIBLE);
+                btnAnalyzeJD.setEnabled(false);
+
                 analyzeJD(resumeSessionId, jdText);
             }
         });
@@ -98,6 +104,11 @@ public class JDAnalysisFragment extends Fragment {
             payload.put("jd_text", jdText);
         } catch (JSONException e) {
             e.printStackTrace();
+            // Hide loading indicator if there's an error
+            requireActivity().runOnUiThread(() -> {
+                progressBar.setVisibility(View.GONE);
+                btnAnalyzeJD.setEnabled(true);
+            });
             return;
         }
 
@@ -109,8 +120,27 @@ public class JDAnalysisFragment extends Fragment {
 
         postJson("/analyze-jd", payload, json -> {
             JSONObject analysis = json.getJSONObject("analysis");
-            requireActivity().runOnUiThread(() -> populateAnalysis(analysis));
+            requireActivity().runOnUiThread(() -> {
+                // Hide loading indicator
+                progressBar.setVisibility(View.GONE);
+                btnAnalyzeJD.setEnabled(true);
+
+                // Show success dialog
+                showSuccessDialog();
+
+                // Populate the analysis results
+                populateAnalysis(analysis);
+            });
         });
+    }
+
+    // Add this new method for showing the success dialog
+    private void showSuccessDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Success")
+                .setMessage("Job description submitted successfully!")
+                .setPositiveButton("OK", null)
+                .show();
     }
 
     private void populateAnalysis(JSONObject a) {
@@ -169,9 +199,13 @@ public class JDAnalysisFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
-                requireActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show()
-                );
+                requireActivity().runOnUiThread(() -> {
+                    // Hide loading indicator in case of network error
+                    progressBar.setVisibility(View.GONE);
+                    btnAnalyzeJD.setEnabled(true);
+
+                    Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+                });
             }
             @Override public void onResponse(Call call, Response response) throws IOException {
                 String s = response.body() != null ? response.body().string() : "";
@@ -180,9 +214,13 @@ public class JDAnalysisFragment extends Fragment {
                     cb.onJson(j);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    requireActivity().runOnUiThread(() ->
-                            Toast.makeText(getContext(), "Parse error", Toast.LENGTH_SHORT).show()
-                    );
+                    requireActivity().runOnUiThread(() -> {
+                        // Hide loading indicator in case of parse error
+                        progressBar.setVisibility(View.GONE);
+                        btnAnalyzeJD.setEnabled(true);
+
+                        Toast.makeText(getContext(), "Parse error", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
         });
