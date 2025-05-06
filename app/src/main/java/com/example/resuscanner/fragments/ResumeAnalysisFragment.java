@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -45,20 +48,34 @@ public class ResumeAnalysisFragment extends Fragment {
     private Uri selectedFileUri;
     private final String BASE_URL = "http://10.0.2.2:5001";
 
+    private LinearLayout analyzeBtnWrapper;
+    private ProgressBar analyzeLoader;
+    private TextView analyzeText;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_resume_analysis, container, false);
+        analyzeBtnWrapper = root.findViewById(R.id.analyze_button_wrapper);
+        analyzeLoader = root.findViewById(R.id.analyze_loader);
+        analyzeText = root.findViewById(R.id.analyze_text);
         Button uploadBtn = root.findViewById(R.id.btn_upload_resume);
-        Button analyzeBtn = root.findViewById(R.id.analyzeButton);
+//        Button analyzeBtn = root.findViewById(R.id.analyzeButton);
         resultView = root.findViewById(R.id.tv_summary);
 
         uploadBtn.setOnClickListener(v -> selectPdfFile());
-        analyzeBtn.setOnClickListener(v -> {
-            if (selectedFileUri != null) uploadResume();
-            else Toast.makeText(getActivity(), "Please select a file first.", Toast.LENGTH_SHORT).show();
+//        analyzeBtn.setOnClickListener(v -> {
+//            if (selectedFileUri != null) uploadResume();
+//            else Toast.makeText(getActivity(), "Please select a file first.", Toast.LENGTH_SHORT).show();
+//        });
+        analyzeBtnWrapper.setOnClickListener(v -> {
+            if (selectedFileUri != null) {
+                showAnalyzeLoading(true);  // show spinner
+                uploadResume();            // trigger analysis
+            } else {
+                Toast.makeText(getActivity(), "Please select a file first.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         // To prevent strict policy issues
@@ -66,6 +83,19 @@ public class ResumeAnalysisFragment extends Fragment {
 
         return root;
     }
+
+    private void showAnalyzeLoading(boolean isLoading) {
+        if (isLoading) {
+            analyzeLoader.setVisibility(View.VISIBLE);
+            analyzeText.setText("Analyzing...");
+            analyzeBtnWrapper.setEnabled(false);
+        } else {
+            analyzeLoader.setVisibility(View.GONE);
+            analyzeText.setText("Analyze Resume");
+            analyzeBtnWrapper.setEnabled(true);
+        }
+    }
+
 
     private void selectPdfFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -78,9 +108,30 @@ public class ResumeAnalysisFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             selectedFileUri = data.getData();
+//            Toast.makeText(getContext(), "File selected: " + selectedFileUri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
+            String fileName = getFileNameFromUri(selectedFileUri);
+            Toast.makeText(getContext(), "File Uploaded: " + fileName, Toast.LENGTH_SHORT).show();
         }
     }
-
+    //Get filename
+    private String getFileNameFromUri(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
     private void uploadResume() {
         try {
             File file = createFileFromUri(selectedFileUri);
@@ -101,6 +152,8 @@ public class ResumeAnalysisFragment extends Fragment {
             if (!response.isSuccessful()) throw new Exception("Upload failed");
 
             JSONObject json = new JSONObject(response.body().string());
+//            String dummyJson = "{ \"analysis\": { \"gaps\": [ \"The resume lacks a summary section providing a brief overview of Nidhi's skills and career goals.\", \"The resume could benefit from quantifying soft skills with specific examples.\", \"Adding a dedicated section for certifications would improve readability.\" ], \"soft_skills\": [ \"Teamwork\", \"Collaboration\", \"Problem-solving\", \"Communication\", \"Agile environment\", \"Defect detection\", \"Performance optimization\", \"Scalability\", \"Security\", \"Troubleshooting\", \"Proactive issue resolution\" ], \"summary\": null, \"technical_skills\": [ \"Java\", \"Python\", \"C++\", \"JavaScript\", \"Groovy\", \"SQL\", \"DynamoDB\", \"PostgreSQL\", \"MySQL\", \"Firebase\", \"React.js\", \"Flask\", \"Selenium\", \"JUnit\", \"JQuery\", \"AWS (EC2, S3, Lambda, RDS, Redis, Batch)\", \"Google Cloud Platform\", \"Docker\", \"Terraform\", \"Jenkins\", \"Git\", \"Postman\", \"Splunk SIEM\", \"Nessus\", \"Nmap\", \"Wireshark\", \"Shell\", \"Perl\", \"Bert LLM\", \"Mastodon API\" ], \"tools\": [ \"Visual Studio\", \"IntelliJ\", \"VS Code\", \"Figma\", \"Jira\", \"Confluence\", \"Linux\" ], \"work_experience\": [ { \"company\": \"Sophos Technologies\", \"duration\": \"Oct 2023 – July 2024\", \"role\": \"Software Engineer\" }, { \"company\": \"Sophos Technologies\", \"duration\": \"Dec 2021 – Sept 2023\", \"role\": \"Software Engineering Intern\" }, { \"company\": \"Techdefence Labs\", \"duration\": \"June 2021 – Nov 2021\", \"role\": \"Security Operation Center Intern\" } ] }, \"session_id\": \"e2344cc1-e323-4d0a-ac8d-bd39dc2c3937\", \"status\": \"analyzed\" }";
+//            JSONObject json = new JSONObject(dummyJson);
 //            String sessionId = json.getString("filename").replace(".pdf", ""); // Or get session ID if returned
             String sessionId = json.getString("session_id");
             analyzeResume(sessionId);
@@ -135,16 +188,20 @@ public class ResumeAnalysisFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
-                requireActivity().runOnUiThread(() ->
-                        resultView.setText("Analysis error: " + e.getMessage()));
+                requireActivity().runOnUiThread(() -> {
+                    resultView.setText("Analysis error: " + e.getMessage());
+                    showAnalyzeLoading(false);
+                });
             }
 
             @Override public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
                     String msg = response.body() != null
                             ? response.body().string() : "no body";
-                    requireActivity().runOnUiThread(() ->
-                            resultView.setText("Analysis failed: " + msg));
+                    requireActivity().runOnUiThread(() -> {
+                        resultView.setText("Analysis failed: " + msg);
+                        showAnalyzeLoading(false);
+                    });
                     return;
                 }
 
@@ -156,15 +213,18 @@ public class ResumeAnalysisFragment extends Fragment {
                 }
 
                 try {
+//                    String dummyJson = "{ \"analysis\": { \"gaps\": [ \"The resume lacks a summary section providing a brief overview of Nidhi's skills and career goals.\", \"The resume could benefit from quantifying soft skills with specific examples.\", \"Adding a dedicated section for certifications would improve readability.\" ], \"soft_skills\": [ \"Teamwork\", \"Collaboration\", \"Problem-solving\", \"Communication\", \"Agile environment\", \"Defect detection\", \"Performance optimization\", \"Scalability\", \"Security\", \"Troubleshooting\", \"Proactive issue resolution\" ], \"summary\": null, \"technical_skills\": [ \"Java\", \"Python\", \"C++\", \"JavaScript\", \"Groovy\", \"SQL\", \"DynamoDB\", \"PostgreSQL\", \"MySQL\", \"Firebase\", \"React.js\", \"Flask\", \"Selenium\", \"JUnit\", \"JQuery\", \"AWS (EC2, S3, Lambda, RDS, Redis, Batch)\", \"Google Cloud Platform\", \"Docker\", \"Terraform\", \"Jenkins\", \"Git\", \"Postman\", \"Splunk SIEM\", \"Nessus\", \"Nmap\", \"Wireshark\", \"Shell\", \"Perl\", \"Bert LLM\", \"Mastodon API\" ], \"tools\": [ \"Visual Studio\", \"IntelliJ\", \"VS Code\", \"Figma\", \"Jira\", \"Confluence\", \"Linux\" ], \"work_experience\": [ { \"company\": \"Sophos Technologies\", \"duration\": \"Oct 2023 – July 2024\", \"role\": \"Software Engineer\" }, { \"company\": \"Sophos Technologies\", \"duration\": \"Dec 2021 – Sept 2023\", \"role\": \"Software Engineering Intern\" }, { \"company\": \"Techdefence Labs\", \"duration\": \"June 2021 – Nov 2021\", \"role\": \"Security Operation Center Intern\" } ] }, \"session_id\": \"e2344cc1-e323-4d0a-ac8d-bd39dc2c3937\", \"status\": \"analyzed\" }";
+//                    final JSONObject analysis = new JSONObject(dummyJson).getJSONObject("analysis");
                     final JSONObject analysis = root.getJSONObject("analysis");
                     // Switch to UI thread
                     requireActivity().runOnUiThread(() -> {
+                        showAnalyzeLoading(false);
                         // 1. Summary
                         String summary = analysis.optString("summary", null);
                         TextView tvSum = getView().findViewById(R.id.tv_summary);
                         tvSum.setText(summary != null && !summary.equals("null")
                                 ? summary
-                                : "(no summary provided)");
+                                : "No summary section was found in uploaded resume.");
 
                         // 2. Technical Skills
                         ChipGroup techGroup = getView().findViewById(R.id.chipgroup_tech_skills);
@@ -282,9 +342,10 @@ public class ResumeAnalysisFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // show an error on UI thread if you like
-                    requireActivity().runOnUiThread(() ->
-                            Toast.makeText(getContext(), "Parse error", Toast.LENGTH_SHORT).show()
-                    );
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Parse error", Toast.LENGTH_SHORT).show();
+                        showAnalyzeLoading(false);
+                    });
                 }
 
 

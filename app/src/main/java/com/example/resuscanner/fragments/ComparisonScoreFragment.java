@@ -15,6 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.animation.ValueAnimator;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import com.example.resuscanner.R;
 
@@ -39,7 +41,8 @@ public class ComparisonScoreFragment extends Fragment {
     private static final String PREFS_NAME = "ResuScannerPrefs";
     private static final String KEY_SESSION_ID = "resumeSessionId";
 
-    private ProgressBar progressMatchScore;
+//    private ProgressBar progressMatchScore;
+    private CircularProgressIndicator progressMatchScore;
     private TextView tvMatchScore;
     private TextView tvMatchExplanation;
     private LinearLayout containerImprovements;
@@ -108,6 +111,7 @@ public class ComparisonScoreFragment extends Fragment {
 
             @Override public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String rawBody = response.body() != null ? response.body().string() : "";
+//                String rawBody = "{ \"match_score\": { \"error\": \"No JSON block found\", \"raw\": \"Match Score: 65%\\n\\nExplanation:\\n\\nSkill Match: The candidate's technical skills in programming languages (Python, Java, C++, JavaScript) and their knowledge of AWS, Docker, and Jenkins are highly relevant to the job. While the role prefers knowledge of Siemens NX, the candidate's experience with design tools like Figma and their understanding of UI design could be a potential fit. The soft skills required, such as problem-solving, collaboration, and communication, are also well-aligned with the candidate's resume. \\n\\nTools/Technologies Overlap: There is a moderate overlap in the tools and technologies used. The candidate has experience with Visual Studio, IntelliJ, VS Code, AWS, and Kubernetes, which are all relevant to the role. However, there is no mention of specific hardware or test equipment experience, as preferred in the job description. \\n\\nPast Experience Relevance: The candidate's work experience as a Software Engineer and Software Engineering Intern demonstrates their proficiency in the field. While their role at Sophos Technologies might not directly translate to all responsibilities in the Integration and Test Intern position, their experience in software development and engineering concepts will be valuable. \\n\\nCulture Fit: Based on the provided information, the candidate seems to be a good culture fit. Their experience working with a team, collaborating, and communicating effectively aligns with the job's emphasis on working closely with mentors and other employees. \\n\\nGaps or Missing Elements: The resume lacks a clear summary, which could impact the overall impression. Additionally, the job description prefers a GPA of 3.5 or above, and while the candidate's GPA is not mentioned, this could be a potential gap. The candidate's experience is primarily in software engineering, and while it is valuable, it would have been ideal to see more specific experience in integration and test equipment. \\n\\nOverall, the candidate's resume demonstrates a good match in terms of skills, tools, and culture. However, the gaps and missing elements, along with the moderate relevance of past experience, bring the score to 65%.\" }, \"session_id\": \"0e6aad7e-f86f-49a6-8a00-4092d8c14247\" }";
                 Log.d(TAG, "match-score rawBody=" + rawBody);
                 try {
                     JSONObject json = new JSONObject(rawBody);
@@ -145,32 +149,43 @@ public class ComparisonScoreFragment extends Fragment {
         }
         return 0;
     }
+private void animateScore(int targetScore) {
+    CircularProgressIndicator progressIndicator = progressMatchScore;
+    TextView scoreText = tvMatchScore;
 
-    private void animateScore(int targetScore) {
-        progressMatchScore.setMax(100);
-        final Handler handler = new Handler();
-        new Thread(() -> {
-            for (int p = 0; p <= targetScore; p++) {
-                final int progress = p;
-                handler.post(() -> {
-                    progressMatchScore.setProgress(progress);
-                    tvMatchScore.setText(progress + "%");
-                });
-                try { Thread.sleep(20); } catch (InterruptedException ignored) {}
-            }
-        }).start();
-    }
+    ValueAnimator animator = ValueAnimator.ofInt(0, targetScore);
+    animator.setDuration(1200); // duration in milliseconds
 
+    animator.addUpdateListener(animation -> {
+        int value = (int) animation.getAnimatedValue();
+        progressIndicator.setProgress(value);
+        scoreText.setText(value + "%");
+    });
+
+    animator.start();
+}
+
+
+//    private void displayImprovements(String rawExplanation) {
+//        tvMatchExplanation.setText("Explanation:");
+//        containerImprovements.removeAllViews();
+//        String[] parts = rawExplanation.split("\\n\\n");
+//        for (String part : parts) {
+//            TextView tv = new TextView(getContext());
+//            tv.setText(part.trim());
+//            tv.setPadding(0, 8, 0, 8);
+//            tv.setTextAppearance(android.R.style.TextAppearance_Material_Body1);
+//            containerImprovements.addView(tv);
+//        }
+//    }
     private void displayImprovements(String rawExplanation) {
-        tvMatchExplanation.setText("Explanation:");
-        containerImprovements.removeAllViews();
-        String[] parts = rawExplanation.split("\\n\\n");
-        for (String part : parts) {
-            TextView tv = new TextView(getContext());
-            tv.setText(part.trim());
-            tv.setPadding(0, 8, 0, 8);
-            tv.setTextAppearance(android.R.style.TextAppearance_Material_Body1);
-            containerImprovements.addView(tv);
-        }
+        containerImprovements.removeAllViews();  // clear previous
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        View card = inflater.inflate(R.layout.item_explanation, containerImprovements, false);
+        TextView tv = card.findViewById(R.id.tv_explanation_point);
+        tv.setText(rawExplanation.trim());
+
+        containerImprovements.addView(card);
     }
 }
