@@ -27,13 +27,42 @@
             android:layout_marginTop="16dp"
             android:text="Upload Resume" />
 
-        <Button
-            android:id="@+id/analyzeButton"
-            style="@style/Widget.MaterialComponents.Button"
+<!--        <Button-->
+<!--            android:id="@+id/analyzeButton"-->
+<!--            style="@style/Widget.MaterialComponents.Button"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:text="Analyze Resume" />-->
+        <LinearLayout
+            android:id="@+id/analyze_button_wrapper"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Analyze Resume" />
+            android:background="@color/purple_500"
+            android:padding="12dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ProgressBar
+                android:id="@+id/analyze_loader"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginEnd="8dp"
+                android:indeterminateTint="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/analyze_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Analyze Resume"
+                android:textColor="@android:color/white"
+                style="@style/TextAppearance.MaterialComponents.Button" />
+        </LinearLayout>
+
 
         <!-- Analysis Results -->
 

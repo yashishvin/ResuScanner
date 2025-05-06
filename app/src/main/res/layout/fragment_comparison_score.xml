@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="24dp"
@@ -22,23 +23,79 @@
         android:layout_marginTop="16dp"
         android:textColor="@color/black"/>
 
-    <ProgressBar
-        android:id="@+id/progress_match_score"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="100"
-        android:progress="0"
-        android:layout_marginTop="24dp"/>
+<!--    <ProgressBar-->
+<!--        android:id="@+id/progress_match_score"-->
+<!--        style="?android:attr/progressBarStyleHorizontal"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:max="100"-->
+<!--        android:progress="0"-->
+<!--        android:layout_marginTop="24dp"/>-->
+<!--    <FrameLayout-->
+<!--        android:layout_width="120dp"-->
+<!--        android:layout_height="120dp"-->
+<!--        android:layout_marginTop="24dp">-->
 
-    <TextView
-        android:id="@+id/tv_match_score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0%"
-        android:textSize="32sp"
-        android:textColor="@color/purple_500"
-        android:layout_marginTop="16dp"/>
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progress_match_score"-->
+<!--            style="?android:attr/progressBarStyleLarge"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:indeterminate="false"-->
+<!--            android:max="100"-->
+<!--            android:progress="0"-->
+<!--            android:progressTint="@color/purple_500" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_match_score"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="0%"-->
+<!--            android:textSize="22sp"-->
+<!--            android:textColor="@color/purple_500"-->
+<!--            android:textStyle="bold" />-->
+<!--    </FrameLayout>-->
+    <FrameLayout
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_match_score"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="false"
+            android:max="100"
+            app:indicatorColor="@color/purple_500"
+            app:trackColor="#D3D3D3"
+            app:indicatorSize="150dp"
+            app:trackThickness="8dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tv_match_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="65%"
+            android:textSize="22sp"
+            android:textColor="@color/purple_500"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+
+
+
+    <!--    <TextView-->
+<!--        android:id="@+id/tv_match_score"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="0%"-->
+<!--        android:textSize="32sp"-->
+<!--        android:textColor="@color/purple_500"-->
+<!--        android:layout_marginTop="16dp"/>-->
 
     <TextView
         android:id="@+id/tv_match_explanation"
