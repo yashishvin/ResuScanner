@@ -12,6 +12,7 @@ jd_outputs_col = get_collection("jd_outputs")
 @jd_api.route("/analyze-jd", methods=["POST"])
 def analyze_jd_api():
     try:
+        user_id = "spartan@sjsu.com"
         data = request.get_json()
         session_id = data.get("session_id")
         jd_text    = data.get("jd_text")
@@ -24,6 +25,7 @@ def analyze_jd_api():
 
         # 2️⃣ Store the JD under the existing session_id
         jd_col.insert_one({
+            "user_id": user_id,
             "session_id": session_id,
             "jd_text": jd_text
         })
@@ -33,6 +35,7 @@ def analyze_jd_api():
 
         # 4️⃣ Save the analysis output under the same session_id
         jd_outputs_col.insert_one({
+            "user_id": user_id,
             "session_id": session_id,
             "analysis": result
         })

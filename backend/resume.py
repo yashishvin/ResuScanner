@@ -11,6 +11,7 @@ resume_outputs_col = get_collection("resume_outputs")
 @resume_api.route("/upload-resume", methods=["POST"])
 def upload_resume():
     try:
+        user_id = "spartan@sjsu.com"
         if 'file' not in request.files:
             return jsonify({"error": "No file part in request"}), 400
 
@@ -26,6 +27,7 @@ def upload_resume():
 
         session_id = str(uuid.uuid4())
         resumes_col.insert_one({
+            "user_id": user_id,
             "session_id": session_id,
             "filename": file.filename,
             "resume_text": resume_text
@@ -40,6 +42,7 @@ def upload_resume():
 @resume_api.route("/analyze-resume", methods=["POST"])
 def analyze_resume_api():
     try:
+        user_id = "spartan@sjsu.com"
         data = request.get_json()
         # resume_text = data.get("resume_text")
         session_id = data.get("session_id")
@@ -53,6 +56,7 @@ def analyze_resume_api():
 
         result = analyze_resume(resume_doc["resume_text"])
         resume_outputs_col.insert_one({
+            "user_id": user_id,
             "session_id": session_id,
             "user_id": user_id,
             "analysis": result

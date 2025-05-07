@@ -4,7 +4,7 @@ from resume import resume_api
 from jd import jd_api
 from matchscore import match_score_api
 from questions import questions_api
-
+from history import history_api
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +13,7 @@ def create_app():
     app.register_blueprint(jd_api)
     app.register_blueprint(match_score_api)
     app.register_blueprint(questions_api)
+    app.register_blueprint(history_api)
     return app
 
 if __name__ == "__main__":
